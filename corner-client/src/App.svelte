@@ -57,7 +57,7 @@
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
     };
     const response = await axios.post(API_URL, params, config);
-    return response.data.authToken; // Adjust based on actual response structure
+    return response.data.authToken;
   }
 
   function initializeGuacamoleClient(token: string) {
@@ -82,7 +82,6 @@
       const remoteDesktopContainer = document.getElementById(
         "remote-desktop-container"
       );
-      // Check if remoteDesktopContainer is not null before proceeding
       if (remoteDesktopContainer) {
         switch (state) {
           case GUAC_STATES.CONNECTED:
@@ -93,11 +92,10 @@
             break;
           case GUAC_STATES.DISCONNECTING:
           case GUAC_STATES.IDLE:
-            remoteDesktopContainer.innerHTML = ""; // Safely clear the container
+            remoteDesktopContainer.innerHTML = "";
             break;
         }
       } else {
-        // Optionally, handle the case when the element is not found
         console.error("Failed to find the remote desktop container element.");
       }
     };
