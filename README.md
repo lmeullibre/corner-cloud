@@ -10,8 +10,13 @@ All code related to the infrastructure will be uploaded soon.
 
 1 April 2024
 
-The first game has been successfully installed, 
+- The first game has been installed. For this I have chosen nInvaders, which uses ncurses so it can be played using only the terminal, so SSH protocol is enough. 
+- The functionality of the virtual machine has been restricted as much as possible to the user. The user will not be able to interact with absolutely nothing inside the virtual machine, only play.
+- A script has been made so that all newly created users, when starting an SSH connection, are redirected directly to the nInvaders game.
+- Modified the .bashrc so that users are automatically disconnected from the session once they have interrupted the game.
+- Users are shown a message thanking them for playing, and have the opportunity to return to the dashboard to choose another game (currently only nInvaders is available).
 
+Translated with DeepL.com (free version)
 
 30 May and before
 
