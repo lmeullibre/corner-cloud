@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,12 +27,13 @@ SECRET_KEY = "django-insecure-t%9hstdn8a3ln_ze1956_o(&f&4e(_vi5yd9u8@&fnfhtn(jjv
 DEBUG = True
 
 ALLOWED_HOSTS = []
+import os
+from dotenv import load_dotenv
 
-REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
-    ),
-}
+load_dotenv()
+
+GUACAMOLE_URL = os.getenv('GUACAMOLE_URL', 'http://localhost:8080/guacamole/')
+VM_PASSWORD = os.getenv('VM_PASSWORD', '123456789')
 
 
 # Application definition
@@ -44,12 +46,24 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "core",
+    'corsheaders',
+    'rest_framework',
+    'drf_yasg',
 ]
 
+GUACAMOLE_SECRET_KEY = '8b8d481c6dcdbd24b4e43825c5345309'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+}
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -58,6 +72,10 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "cloudserver.urls"
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:5173',
+]
 
 TEMPLATES = [
     {
@@ -86,6 +104,8 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
+
+AUTH_USER_MODEL = 'core.User'
 
 
 # Password validation
