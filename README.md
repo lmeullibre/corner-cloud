@@ -9,14 +9,16 @@ All code related to the infrastructure will be uploaded soon.
 ## Development diary
 
 1 April 2024
+
 The first game has been successfully installed, 
 
 
 30 May and before
--Minimal infrastructure has been built to allow users to connect to the virtual machine terminal via SSH in the browser. For this, we have taken advantage of the open source project called Apache Guacamole. 
+
+- Minimal infrastructure has been built to allow users to connect to the virtual machine terminal via SSH in the browser. For this, we have taken advantage of the open source project called Apache Guacamole. 
 Apache Guacamole is an open-source clientless remote desktop gateway. It allows users to access their computers from anywhere using a web browser, without needing to install client software on the device from which they are accessing their computers. Apache guacamole comes in handy for enabling SSH or VNC connections. Enough for now.
 
--The virtual machine that users access is predefined, with all values hardcoded.
+- The virtual machine that users access is predefined, with all values hardcoded.
 
 - I have built a web application using SvelteKit and Django to control the available users, sessions and games. 
 
@@ -24,5 +26,4 @@ Apache Guacamole is an open-source clientless remote desktop gateway. It allows 
 
 
 
-Translated with DeepL.com (free version)
 
