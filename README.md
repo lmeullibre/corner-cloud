@@ -25,7 +25,7 @@ Apache Guacamole is an open-source clientless remote desktop gateway. It allows 
 
 - I have built a web application using SvelteKit and Django to control the available users, sessions and games. 
 
-- A microservice has been deployed that consumes the guacamole-lite library https://github.com/vadimpronin/guacamole-lite. This library allows us to start a websocket tunnel directly with the guacamole daemon, guacd. Basically it acts as the proxy between the web client (the user's browser accessing the Guacamole interface) and the remote desktop servers (such as those running VNC, RDP, or SSH services). 
+- A microservice has been deployed that consumes the guacamole-lite library https://github.com/vadimpronin/guacamole-lite. This library allows us to start a websocket tunnel directly with the guacamole daemon named `guacd`. Basically it acts as the proxy between the web client (the user's browser accessing the Guacamole interface) and the remote desktop servers (such as those running VNC, RDP, or SSH services). 
 
 
 
