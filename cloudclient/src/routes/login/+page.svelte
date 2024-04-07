@@ -6,7 +6,7 @@
 
 	let username: string = '';
 	let password: string = '';
-
+	let isRegistering = false;
 	async function handleSubmit(): Promise<void> {
 		const data = await loginService(username, password);
 		if (data) {
