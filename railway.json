@@ -1,4 +1,8 @@
 {
-  "name": "corner-cloud",
-  "dockerComposePath": "core/docker-compose.yml"
+  "build": {
+    "builder": "nixpacks",
+    "nixpacksPlan": {
+      "start": "cd core && docker-compose up --build"
+    }
+  }
 }
