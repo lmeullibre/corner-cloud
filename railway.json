@@ -1,0 +1,4 @@
+{
+  "name": "corner-cloud",
+  "dockerComposePath": "core/docker-compose.yml"
+}
