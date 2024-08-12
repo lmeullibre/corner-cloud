@@ -1,8 +1,8 @@
 {
   "build": {
-    "builder": "nixpacks",
-    "nixpacksPlan": {
-      "start": "cd core && docker-compose up --build"
-    }
+    "command": "docker-compose -f core/docker-compose.yml build"
+  },
+  "deploy": {
+    "command": "docker-compose -f core/docker-compose.yml up"
   }
 }
