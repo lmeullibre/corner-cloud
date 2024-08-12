@@ -1,0 +1,79 @@
+services:
+  guacd:
+    image: guacamole/guacd
+    container_name: guacd
+    restart: always
+    ports:
+      - "127.0.0.1:4822:4822"
+    networks:
+      - guac-network
+
+  mysql:
+    image: mysql:5.7
+    container_name: guac_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: guacamole_db
+      MYSQL_USER: guacamole_user
+      MYSQL_PASSWORD: guacamole_password
+    volumes:
+      - guacamole_db:/var/lib/mysql
+    networks:
+      - guac-network
+
+  guacamole:
+    image: guacamole/guacamole
+    container_name: guacamole
+    restart: always
+    depends_on:
+      - guacd
+      - mysql
+    volumes:
+      - ./guacamole_home:/etc/guacamole
+    environment:
+      GUACD_HOSTNAME: guacd
+      MYSQL_HOSTNAME: mysql
+      MYSQL_DATABASE: guacamole_db
+      MYSQL_USER: guacamole_user
+      MYSQL_PASSWORD: guacamole_password
+    ports:
+      - "127.0.0.1:8080:8080"
+    networks:
+      - guac-network
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    restart: always
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "80:80"
+    depends_on:
+      - guacamole
+    networks:
+      - guac-network
+
+networks:
+  guac-network:
+    driver: bridge
+  # Comment out or remove the lite-server section
+  # lite-server:
+  #   build: ./lite-server
+  #   environment:
+  #     GUACD_HOST: guacd
+  #     GUACD_PORT: 4822
+  #   ports:
+  #     - "127.0.0.1:3000:3000"
+  #   depends_on:
+  #     - guacd
+
+  #initdb:
+  #  image: guacamole/guacamole
+  #  entrypoint: /opt/guacamole/bin/initdb.sh --mysql
+  #  volumes:
+  #    - ./initdb.sql:/initdb.sql
+
+volumes:
+  guacamole_db:

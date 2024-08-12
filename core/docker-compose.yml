@@ -1,0 +1,75 @@
+version: "3"
+services:
+  guacd:
+    image: guacamole/guacd
+    container_name: guacd
+    restart: always
+    ports:
+      - "127.0.0.1:4822:4822"
+    networks:
+      - main
+
+  mysql:
+    image: mysql:5.7
+    container_name: guac_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: guacamole_db
+      MYSQL_USER: guacamole_user
+      MYSQL_PASSWORD: guacamole_password
+    volumes:
+      - guacamole_db:/var/lib/mysql
+    networks:
+      - main
+
+  guacamole:
+    image: guacamole/guacamole
+    container_name: guacamole
+    restart: always
+    depends_on:
+      - guacd
+      - mysql
+    volumes:
+      - ./guacamole_home:/etc/guacamole
+    environment:
+      GUACD_HOSTNAME: guacd
+      MYSQL_HOSTNAME: mysql
+      MYSQL_DATABASE: guacamole_db
+      MYSQL_USER: guacamole_user
+      MYSQL_PASSWORD: guacamole_password
+    ports:
+      - "127.0.0.1:8080:8080"
+    networks:
+      - main
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    restart: always
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "80:80"
+    depends_on:
+      - guacamole
+    networks:
+      - main
+
+  lite-server:
+    build: ./lite-server
+    container_name: lite-server
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - guacd
+    networks:
+      - main
+
+networks:
+  main:
+    external: true
+
+volumes:
+  guacamole_db:

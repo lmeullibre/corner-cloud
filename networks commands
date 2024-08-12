@@ -1,0 +1,10 @@
+Apparently containers cannot connect to other containers out of the box. Therefore, guacd will fail to connect to another containers
+
+docker network create guac-network
+
+docker network connect guac-network guacd
+docker network connect guac-network ninvaders
+
+There's a command to put the container straight into the network
+docker network create guac-network
+docker run -d --name ninvaders-container --network guac-network -p 2223:22 ninvaders-container
