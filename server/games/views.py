@@ -29,6 +29,8 @@ def user_has_permission_for_container(request, container_name):
     return container_name == expected_container_name
 
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def launch_game(request, slug):
     # Retrieve the game by slug
     game = get_object_or_404(Game, slug=slug)
@@ -64,7 +66,7 @@ def launch_game(request, slug):
             "name": container_name,
             "detach": True,
             "network": network_name,
-            "ports": {'22/tcp': 8022},
+            "ports": {f'{game.internal_port}/tcp': game.port},  # Dynamic internal port based on the service type
         }
 
         if game.entry_point:
@@ -86,9 +88,14 @@ def launch_game(request, slug):
     except docker.errors.APIError as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-    # Generate the SSH access URL
-    play_url = f'ssh root@{request.get_host()} -p 8022'
-    
+    # Generate the access URL based on the service type
+    if game.internal_port == 22:
+        play_url = f'ssh root@{request.get_host()} -p {game.port}'
+    elif game.internal_port == 5900:
+        play_url = f'vnc://{request.get_host()}:{game.port}'
+    else:
+        play_url = f'{request.get_host()}:{game.port}'
+
     return Response({'container_name': container_name, 'play_url': play_url}, status=status.HTTP_200_OK)
 
 
