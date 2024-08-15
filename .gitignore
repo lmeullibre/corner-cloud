@@ -1,0 +1,103 @@
+# General
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log
+*.tmp
+*.swp
+*.swo
+*.bak
+*.orig
+
+# Node.js / Svelte
+node_modules/
+dist/
+build/
+.svelte-kit/
+.vite/
+public/build/
+*.env
+*.local
+
+# Django
+__pycache__/
+*.py[cod]
+*.sqlite3
+db.sqlite3
+*.pyo
+*.pyd
+*.db
+*.sqlite3-journal
+
+# Django environment variables
+.env
+.env.*
+
+# Django static files
+/static/
+/media/
+
+# Django Migrations
+*/migrations/*.pyc
+*/migrations/*.pyo
+*/migrations/*.log
+*/migrations/*.tmp
+*/migrations/*.bak
+*/migrations/*.orig
+
+# Python virtual environments
+venv/
+.venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+cover/
+*.py[cod]
+.pytest_cache/
+
+# VS Code files
+.vscode/
+
+# macOS specific
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Linux specific
+*~
+# KDE directory preferences
+.directory
+
+# Windows specific
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Local project settings
+*.local
+
+# Pycharm specific
+.idea/
+
+# pipenv files
+Pipfile.lock
+
+# Python __pycache__ and compiled files
+__pycache__/
+*.py[cod]

@@ -29,8 +29,6 @@ def user_has_permission_for_container(request, container_name):
     return container_name == expected_container_name
 
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
 def launch_game(request, slug):
     # Retrieve the game by slug
     game = get_object_or_404(Game, slug=slug)
@@ -60,15 +58,20 @@ def launch_game(request, slug):
         return Response({'error': f'Failed to create network: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     try:
-        # Run the game container with SSH access and attach to the new network
-        container = client.containers.run(
-            image=game.docker_image,
-            name=container_name,
-            detach=True,
-            network=network_name,
-            ports={'22/tcp': 8022},
-            command=game.entry_point
-        )
+        # Determine whether to include the entry_point command
+        container_args = {
+            "image": game.docker_image,
+            "name": container_name,
+            "detach": True,
+            "network": network_name,
+            "ports": {'22/tcp': 8022},
+        }
+
+        if game.entry_point:
+            container_args["command"] = game.entry_point
+
+        # Run the game container with or without a specific entry point
+        container = client.containers.run(**container_args)
 
         # Connect essential services to the new network
         essential_services = ['guacamole', 'guacd', 'nginx', 'guac_mysql', 'lite-server']
@@ -87,6 +90,7 @@ def launch_game(request, slug):
     play_url = f'ssh root@{request.get_host()} -p 8022'
     
     return Response({'container_name': container_name, 'play_url': play_url}, status=status.HTTP_200_OK)
+
 
 
 @api_view(['POST'])
