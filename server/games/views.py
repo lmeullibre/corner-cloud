@@ -28,6 +28,33 @@ def user_has_permission_for_container(request, container_name):
     expected_container_name = f"{container_name.split('_')[0]}_{request.user.username}"
     return container_name == expected_container_name
 
+def disconnect_and_remove_network(network_name):
+    """
+    Disconnect all containers from the network and then remove the network.
+    """
+    client = docker.from_env()
+
+    try:
+        # Retrieve the network
+        network = client.networks.get(network_name)
+
+        # Disconnect all containers from the network
+        for container in network.containers:
+            try:
+                network.disconnect(container, force=True)
+            except docker.errors.APIError as e:
+                return {'error': f'Failed to disconnect container {container.name} from the network: {str(e)}'}
+        
+        # After disconnecting all containers, proceed to remove the network
+        network.remove()
+        return {'success': f'Network {network_name} has been removed successfully.'}
+
+    except docker.errors.NotFound:
+        return {'error': f'Network {network_name} does not exist.'}
+    except docker.errors.APIError as e:
+        return {'error': str(e)}
+
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -66,7 +93,7 @@ def launch_game(request, slug):
             "name": container_name,
             "detach": True,
             "network": network_name,
-            "ports": {f'{game.internal_port}/tcp': game.port},  # Dynamic internal port based on the service type
+            "ports": {f'{game.internal_port}/tcp': game.port},  # Dynamic internal port based on the service type,
         }
 
         if game.entry_point:
@@ -232,6 +259,35 @@ def get_container_network_info(request, container_name):
         return Response({'error': 'Container not found'}, status=status.HTTP_404_NOT_FOUND)
     except Exception as e:
         return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def remove_game_network(request, slug):
+    try:
+        game = Game.objects.get(slug=slug)
+    except Game.DoesNotExist:
+        raise NotFound(detail="Game not found", code=status.HTTP_404_NOT_FOUND)
+    
+    # Generate the container and network name based on the game slug and username
+    container_name = f"{game.slug}_{request.user.username}"
+    network_name = f"{container_name}_network"
+
+    # Check if the network belongs to the current user's container
+    if not user_has_permission_for_container(request, container_name):
+        return Response(
+            {'error': 'You do not have permission to remove this network.'},
+            status=status.HTTP_403_FORBIDDEN
+        )
+    
+    # Use the helper function to disconnect and remove the network
+    network_response = disconnect_and_remove_network(network_name)
+    if 'error' in network_response:
+        return Response(network_response, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    return Response({'message': network_response['success']}, status=status.HTTP_200_OK)
+
+
     
 class GameDetailBySlugView(generics.RetrieveAPIView):
     queryset = Game.objects.all()
